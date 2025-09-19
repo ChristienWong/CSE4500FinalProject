@@ -8,15 +8,17 @@ namespace finalProject
     {
         // Outlets
         Rigidbody2D _rb;
+        Collider2D _col;
 
         // Configuration
         public float speed;
         public float jumpForce;
+        public LayerMask ground;
         void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
+            _col = GetComponent<Collider2D>();
         }
-
 
         void Update()
         {
@@ -33,10 +35,17 @@ namespace finalProject
             }
 
             // Jump
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
             {
                 _rb.AddForce(Vector2.up * jumpForce);
             }
+        }
+        bool IsGrounded()
+        {
+            Bounds bounds = _col.bounds;
+            float extraHeight = 0.05f;
+            RaycastHit2D hit = Physics2D.BoxCast(bounds.center, bounds.size, 0f, Vector2.down, extraHeight, ground);
+            return hit.collider != null;
         }
     }
 }
