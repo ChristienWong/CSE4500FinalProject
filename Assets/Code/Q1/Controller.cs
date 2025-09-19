@@ -14,11 +14,22 @@ namespace finalProject
         public float speed;
         public float jumpForce;
         public LayerMask ground;
+
+                                
+        // public Transform respawnPoint;                
+        private Vector3 _spawnPos;
+        private int _actualGroundLayer;
+
+
+
         void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<Collider2D>();
+
+            _spawnPos = transform.position; 
         }
+
 
         void Update()
         {
@@ -46,6 +57,23 @@ namespace finalProject
             float extraHeight = 0.05f;
             RaycastHit2D hit = Physics2D.BoxCast(bounds.center, bounds.size, 0f, Vector2.down, extraHeight, ground);
             return hit.collider != null;
+        }
+
+        // collision with the actual ground 
+        void OnCollisionEnter2D(Collision2D collision)   
+        {
+            if (collision.collider.gameObject.layer == LayerMask.NameToLayer("ActualGround"))
+                
+                ResetToSpawn(); 
+        }
+        
+        
+        // The Respawn fucntion 
+        void ResetToSpawn()                               
+        {
+            _rb.velocity = Vector2.zero;                 
+            _rb.angularVelocity = 0f;                     
+            transform.position = _spawnPos;               
         }
     }
 }
