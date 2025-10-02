@@ -10,43 +10,58 @@ namespace finalProject
         // Outlets
         Rigidbody2D _rb;
         Collider2D _col;
+        public Animator _animator;
 
         // Configuration
         public float speed;
         public float jumpForce;
         public LayerMask ground;
 
-        public Animator _animator;
-
+        //shooting 
+        public GameObject projectilePrefab;
+        public Transform ShootPoint;
+        public float projectileSpeed = 10f;
                                 
         // public Transform respawnPoint;                
         private Vector3 _spawnPos;
         private int _actualGroundLayer;
-
-
+        private bool facingRight = true;
 
         void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<Collider2D>();
-
             _spawnPos = transform.position; 
         }
 
 
         void Update()
         {
+            bool isMoving = false;
+
             // Move Left
             if (Input.GetKey(KeyCode.LeftArrow))
             {
                 _rb.AddForce(Vector2.left * speed * Time.deltaTime);
+                isMoving = true;
+                
+                if(facingRight){
+                    Flip();
+                }
             }
 
             // Move Right
             if (Input.GetKey(KeyCode.RightArrow))
             {
                 _rb.AddForce(Vector2.right * speed * Time.deltaTime);
+                isMoving = true;
+
+                if(!facingRight){
+                    Flip();
+                }
             }
+
+            _animator.SetBool("isRunning", isMoving);
 
             // Jump
             if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
@@ -56,13 +71,8 @@ namespace finalProject
 
             float input = Input.GetAxisRaw("Horizontal");
 
-            if (input != 0)
-            {
-                _animator.SetBool("isRunning", true);
-            }
-            else
-            {
-                _animator.SetBool("isRunning", false);
+            if (Input.GetKeyDown(KeyCode.Z)){
+                Shoot();
             }
         }
         bool IsGrounded()
@@ -72,5 +82,21 @@ namespace finalProject
             RaycastHit2D hit = Physics2D.BoxCast(bounds.center, bounds.size, 0f, Vector2.down, extraHeight, ground);
             return hit.collider != null;
         }
+
+        void Flip()
+        {
+            facingRight = !facingRight;
+            Vector3 scale = transform.localScale;
+            scale.x *= -1;
+            transform.localScale = scale;
+        }
+
+        void Shoot()
+        {
+            GameObject projectile = Instantiate(projectilePrefab, ShootPoint.position, Quaternion.identity);
+            Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+            rb.velocity = new Vector2(facingRight ? projectileSpeed : -projectileSpeed, 0);
+        }
+        
     }
 }
