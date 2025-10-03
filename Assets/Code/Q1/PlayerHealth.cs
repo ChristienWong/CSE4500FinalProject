@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine;
-
 namespace finalProject
 {
     public class PlayerHealth : MonoBehaviour
@@ -11,19 +9,47 @@ namespace finalProject
         public int maxHealth = 5;
         private int currentHealth;
 
+        [SerializeField]
+        private Heart heartUI;
+
         void Start()
         {
-            currentHealth = maxHealth;
+            if (heartUI == null)
+            {
+                heartUI = FindObjectOfType<Heart>();
+            }
+
+            ResetHealth();
         }
 
         public void TakeDamage(int amount)
         {
-            currentHealth -= amount;
+            currentHealth = Mathf.Max(0, currentHealth - amount);
             Debug.Log("Player damaged. Current health: " + currentHealth);
+
+            SyncHeartUI();
+
             if (currentHealth <= 0)
             {
                 Die();
             }
+        }
+
+        public void ResetHealth()
+        {
+            currentHealth = maxHealth;
+            SyncHeartUI();
+        }
+
+        void SyncHeartUI()
+        {
+            if (heartUI == null)
+            {
+                return;
+            }
+
+            heartUI.numOfHearts = maxHealth;
+            heartUI.health = Mathf.Clamp(currentHealth, 0, maxHealth);
         }
 
         void Die()

@@ -10,11 +10,20 @@ namespace finalProject
         Vector3 _spawnPos;
         int _respawnLayer;
 
+        [SerializeField]
+        PlayerHealth _playerHealth;
+
         void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
             _spawnPos = respawnPoint ? respawnPoint.position : transform.position;
             _respawnLayer = LayerMask.NameToLayer("Respawn");   
+
+            if (_playerHealth == null)
+            {
+                _playerHealth = GetComponent<PlayerHealth>();
+            }
+            
         }
 
         public void DoRespawn()
@@ -25,6 +34,11 @@ namespace finalProject
                 _rb.angularVelocity = 0f;
             }
             transform.position = _spawnPos;
+
+            if (_playerHealth != null)
+            {
+                _playerHealth.ResetHealth();
+            }
         }
 
         void OnTriggerEnter2D(Collider2D other)
