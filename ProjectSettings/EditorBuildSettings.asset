@@ -7,5 +7,11 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Q1.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
+    guid: 9f8b85c47b7c041fbb78a58077f53dcd
+  - enabled: 1
+    path: Assets/Scenes/Q2.unity
+    guid: 4c49a43a52e76f84d9a8110ad0fde4c0
+  - enabled: 1
+    path: Assets/Scenes/Q3.unity
+    guid: 04b50a867f156104ba2a0013912484ef
   m_configObjects: {}

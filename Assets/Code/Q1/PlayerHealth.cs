@@ -12,11 +12,19 @@ namespace finalProject
         [SerializeField]
         private Heart heartUI;
 
+        [SerializeField]
+        Respawn _respawn;
+
         void Start()
         {
             if (heartUI == null)
             {
                 heartUI = FindObjectOfType<Heart>();
+            }
+
+            if (_respawn == null)
+            {
+                _respawn = GetComponent<Respawn>();
             }
 
             ResetHealth();
@@ -55,6 +63,15 @@ namespace finalProject
         void Die()
         {
             Debug.Log("Player died");
+
+            if (_respawn != null)
+            {
+                _respawn.DoRespawn();
+            }
+            else
+            {
+                Debug.LogWarning("Player died but no Respawn component was found to handle respawn.");
+            }
         }
     }
 }
