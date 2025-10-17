@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace finalProject
 {
@@ -13,10 +14,15 @@ namespace finalProject
         [SerializeField]
         PlayerHealth _playerHealth;
 
+        void Awake()
+        {
+            SceneManager.sceneLoaded += HandleSceneLoaded;
+        }
+
         void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
-            _spawnPos = respawnPoint ? respawnPoint.position : transform.position;
+            CacheSpawnPoint();
             _respawnLayer = LayerMask.NameToLayer("Respawn");   
 
             if (_playerHealth == null)
@@ -45,6 +51,36 @@ namespace finalProject
         {
             if (other.gameObject.layer == _respawnLayer) DoRespawn();
         }
+
+        void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+        }
+
+        void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            CacheSpawnPoint();
+        }
+
+        void CacheSpawnPoint()
+        {
+            if (respawnPoint == null)
+            {
+                respawnPoint = FindRespawnPointInScene();
+            }
+
+            _spawnPos = respawnPoint ? respawnPoint.position : transform.position;
+        }
+
+        Transform FindRespawnPointInScene()
+        {
+            GameObject taggedPoint = GameObject.FindGameObjectWithTag("Respawn");
+            if (taggedPoint != null)
+            {
+                return taggedPoint.transform;
+            }
+
+            return null;
+        }
     }
 }
-
