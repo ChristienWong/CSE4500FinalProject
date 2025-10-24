@@ -22,74 +22,105 @@ namespace finalProject
         public int MaxAmmo => maxAmmo;
         public bool HasAmmo => currentAmmo > 0;
 
-        void Awake(){
+        void Awake()
+        {
             if (maxAmmo < 0)
             {
                 maxAmmo = 0;
             }
 
-            if (currentAmmo <= 0 || currentAmmo > maxAmmo) {
-                currentAmmo = maxAmmo;
-            }
-
+            currentAmmo = Mathf.Clamp(currentAmmo, 0, maxAmmo);
             UpdateUI();
         }
 
-        public bool TrySpendAmmo(int amount) {
-            if (amount <= 0){
+        public void ApplyStoredAmmo(int storedAmmo)
+        {
+            currentAmmo = Mathf.Clamp(storedAmmo, 0, maxAmmo);
+            SyncStats();
+            UpdateUI();
+        }
+
+        public bool TrySpendAmmo(int amount)
+        {
+            if (amount <= 0)
+            {
                 return true;
             }
 
-            if (currentAmmo < amount){
+            if (currentAmmo < amount)
+            {
                 UpdateUI();
                 return false;
             }
 
             currentAmmo -= amount;
+            SyncStats();
             UpdateUI();
             return true;
         }
 
-        public void AddAmmo(int amount) {
-            if (amount <= 0 || maxAmmo <= 0){
+        public void AddAmmo(int amount)
+        {
+            if (amount <= 0 || maxAmmo <= 0)
+            {
                 return;
             }
 
             currentAmmo = Mathf.Clamp(currentAmmo + amount, 0, maxAmmo);
+            SyncStats();
             UpdateUI();
         }
 
-        public void Refill(){
+        public void Refill()
+        {
             currentAmmo = maxAmmo;
+            SyncStats();
             UpdateUI();
         }
 
-        public void SetAmmo(int amount){
+        public void SetAmmo(int amount)
+        {
             currentAmmo = Mathf.Clamp(amount, 0, maxAmmo);
+            SyncStats();
             UpdateUI();
         }
 
-        void UpdateUI(){
-            if (ammoText != null){
+        void SyncStats()
+        {
+            if (PlayerStats.Initialized)
+            {
+                PlayerStats.UpdateAmmo(currentAmmo);
+            }
+        }
+
+        void UpdateUI()
+        {
+            if (ammoText != null)
+            {
                 ammoText.text = currentAmmo.ToString();
             }
 
-            if (rotateDial && dialTransform != null){
+            if (rotateDial && dialTransform != null)
+            {
                 float t = maxAmmo <= 0 ? 0f : (float)currentAmmo / maxAmmo;
                 float angle = Mathf.Lerp(emptyAngle, fullAngle, t);
                 dialTransform.localRotation = Quaternion.Euler(0f, 0f, angle);
             }
 
-            if (fillImage != null){
+            if (fillImage != null)
+            {
                 float t = maxAmmo <= 0 ? 0f : (float)currentAmmo / maxAmmo;
                 fillImage.fillAmount = t;
             }
         }
 
 #if UNITY_EDITOR
-        void OnValidate(){
-            if (!Application.isPlaying){
-                if (maxAmmo < 0){
+        void OnValidate()
+        {
+            if (!Application.isPlaying)
+            {
+                if (maxAmmo < 0)
+                {
                     maxAmmo = 0;
                 }
 

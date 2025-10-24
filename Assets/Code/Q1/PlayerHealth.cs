@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace finalProject
 {
@@ -21,6 +20,9 @@ namespace finalProject
         [SerializeField]
         int respawnAmmo = 50;
 
+        [SerializeField]
+        string restartSceneName = "Q1";
+
         void Start()
         {
             if (heartUI == null)
@@ -38,7 +40,8 @@ namespace finalProject
                 ammoSystem = FindObjectOfType<Ammo>();
             }
 
-            ResetHealth();
+            InitializeStats();
+            ApplyStatsToWorld();
         }
 
         public void TakeDamage(int amount)
@@ -46,6 +49,7 @@ namespace finalProject
             currentHealth = Mathf.Max(0, currentHealth - amount);
             Debug.Log("Player damaged. Current health: " + currentHealth);
 
+            PlayerStats.UpdateHealth(currentHealth);
             SyncHeartUI();
 
             if (currentHealth <= 0)
@@ -57,6 +61,7 @@ namespace finalProject
         public void ResetHealth()
         {
             currentHealth = maxHealth;
+            PlayerStats.UpdateHealth(currentHealth);
             SyncHeartUI();
         }
 
@@ -75,19 +80,46 @@ namespace finalProject
         {
             Debug.Log("Player died");
 
+            PlayerStats.ResetForDeath();
+
             if (ammoSystem != null)
             {
-                ammoSystem.SetAmmo(respawnAmmo);
+                ammoSystem.ApplyStoredAmmo(PlayerStats.CurrentAmmo);
             }
 
-            if (_respawn != null)
+            if (string.IsNullOrWhiteSpace(restartSceneName))
             {
-                _respawn.DoRespawn();
+                restartSceneName = SceneManager.GetActiveScene().name;
+            }
+
+            SceneManager.LoadScene(restartSceneName);
+        }
+
+        void InitializeStats()
+        {
+            int ammoMax = ammoSystem != null ? ammoSystem.MaxAmmo : respawnAmmo;
+            int ammoCurrent = ammoSystem != null ? ammoSystem.CurrentAmmo : respawnAmmo;
+
+            if (!PlayerStats.Initialized)
+            {
+                PlayerStats.Initialize(maxHealth, maxHealth, ammoMax, ammoCurrent, respawnAmmo);
             }
             else
             {
-                Debug.LogWarning("Player died but no Respawn component was found to handle respawn.");
+                PlayerStats.UpdateMaxValues(maxHealth, ammoMax, respawnAmmo);
             }
         }
+
+        void ApplyStatsToWorld()
+        {
+            currentHealth = Mathf.Clamp(PlayerStats.CurrentHealth, 0, maxHealth);
+            SyncHeartUI();
+
+            if (ammoSystem != null && PlayerStats.Initialized)
+            {
+                ammoSystem.ApplyStoredAmmo(PlayerStats.CurrentAmmo);
+            }
+        }
+
     }
 }
