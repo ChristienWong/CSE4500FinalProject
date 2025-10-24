@@ -15,6 +15,12 @@ namespace finalProject
         [SerializeField]
         Respawn _respawn;
 
+        [SerializeField]
+        Ammo ammoSystem;
+
+        [SerializeField]
+        int respawnAmmo = 50;
+
         void Start()
         {
             if (heartUI == null)
@@ -25,6 +31,11 @@ namespace finalProject
             if (_respawn == null)
             {
                 _respawn = GetComponent<Respawn>();
+            }
+
+            if (ammoSystem == null)
+            {
+                ammoSystem = FindObjectOfType<Ammo>();
             }
 
             ResetHealth();
@@ -63,6 +74,11 @@ namespace finalProject
         void Die()
         {
             Debug.Log("Player died");
+
+            if (ammoSystem != null)
+            {
+                ammoSystem.SetAmmo(respawnAmmo);
+            }
 
             if (_respawn != null)
             {

@@ -21,6 +21,7 @@ namespace finalProject
         public GameObject projectilePrefab;
         public Transform ShootPoint;
         public float projectileSpeed = 10f;
+        [SerializeField] Ammo ammoSystem;
                                 
         // public Transform respawnPoint;                
         private Vector3 _spawnPos;
@@ -93,6 +94,16 @@ namespace finalProject
 
         void Shoot()
         {
+            if (ammoSystem != null && !ammoSystem.TrySpendAmmo(1))
+            {
+                return; // Prevent firing when out of ammo.
+            }
+
+            if (projectilePrefab == null || ShootPoint == null)
+            {
+                return;
+            }
+
             GameObject projectile = Instantiate(projectilePrefab, ShootPoint.position, Quaternion.identity);
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
             rb.velocity = new Vector2(facingRight ? projectileSpeed : -projectileSpeed, 0);
