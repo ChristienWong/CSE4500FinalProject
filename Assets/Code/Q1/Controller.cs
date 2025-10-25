@@ -27,6 +27,7 @@ namespace finalProject
         private Vector3 _spawnPos;
         private int _actualGroundLayer;
         private bool facingRight = true;
+        private bool isJumping = false;
 
         void Start()
         {
@@ -68,6 +69,14 @@ namespace finalProject
             if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
             {
                 _rb.AddForce(Vector2.up * jumpForce);
+                isJumping = true; //set true on jump
+                _animator.SetBool("isJumping", true);
+            }
+
+             if (isJumping && IsGrounded())
+            {
+                isJumping = false; // reset when landed
+                _animator.SetBool("isJumping", false);
             }
 
             float input = Input.GetAxisRaw("Horizontal");
