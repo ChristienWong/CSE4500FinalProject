@@ -117,6 +117,16 @@ namespace finalProject
 
             if (ammoSystem != null && PlayerStats.Initialized)
             {
+                if (PlayerStats.CurrentAmmo <= 0 && ammoSystem.MaxAmmo > 0)
+                {
+                    int fallbackAmmo = PlayerStats.RespawnAmmo > 0
+                        ? PlayerStats.RespawnAmmo
+                        : 1;
+
+                    fallbackAmmo = Mathf.Clamp(fallbackAmmo, 1, ammoSystem.MaxAmmo);
+                    PlayerStats.UpdateAmmo(fallbackAmmo);
+                }
+
                 ammoSystem.ApplyStoredAmmo(PlayerStats.CurrentAmmo);
             }
         }

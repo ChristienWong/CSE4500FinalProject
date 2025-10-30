@@ -24,6 +24,7 @@ namespace finalProject
 
         void Awake()
         {
+            maxAmmo = Mathf.Clamp(maxAmmo, 0, 100);
             if (maxAmmo < 0)
             {
                 maxAmmo = 0;
@@ -119,10 +120,7 @@ namespace finalProject
         {
             if (!Application.isPlaying)
             {
-                if (maxAmmo < 0)
-                {
-                    maxAmmo = 0;
-                }
+                maxAmmo = Mathf.Clamp(maxAmmo, 0, 100);
 
                 currentAmmo = Mathf.Clamp(currentAmmo, 0, maxAmmo);
                 UpdateUI();

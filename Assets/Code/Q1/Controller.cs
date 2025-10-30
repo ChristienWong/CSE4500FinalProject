@@ -7,23 +7,19 @@ namespace finalProject
 {
     public class Controller : MonoBehaviour
     {
-        // Outlets
         Rigidbody2D _rb;
         Collider2D _col;
         public Animator _animator;
 
-        // Configuration
         public float speed;
         public float jumpForce;
         public LayerMask ground;
 
-        //shooting 
         public GameObject projectilePrefab;
         public Transform ShootPoint;
         public float projectileSpeed = 10f;
         [SerializeField] Ammo ammoSystem;
-                                
-        // public Transform respawnPoint;                
+                                              
         private Vector3 _spawnPos;
         private int _actualGroundLayer;
         private bool facingRight = true;
@@ -34,6 +30,16 @@ namespace finalProject
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<Collider2D>();
             _spawnPos = transform.position; 
+
+            if (ammoSystem == null)
+            {
+                ammoSystem = GetComponentInChildren<Ammo>();
+
+                if (ammoSystem == null)
+                {
+                    ammoSystem = FindObjectOfType<Ammo>();
+                }
+            }
         }
 
 

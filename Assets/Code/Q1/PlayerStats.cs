@@ -14,7 +14,7 @@ namespace finalProject
         public static void Initialize(int maxHealth, int startHealth, int maxAmmo, int startAmmo, int respawnAmmo)
         {
             MaxHealth = Mathf.Max(0, maxHealth);
-            MaxAmmo = Mathf.Max(0, maxAmmo);
+            MaxAmmo = Mathf.Clamp(maxAmmo, 0, 100);
             RespawnAmmo = Mathf.Clamp(respawnAmmo, 0, MaxAmmo);
 
             CurrentHealth = Mathf.Clamp(startHealth, 0, MaxHealth);
@@ -26,7 +26,7 @@ namespace finalProject
         public static void UpdateMaxValues(int maxHealth, int maxAmmo, int respawnAmmo)
         {
             MaxHealth = Mathf.Max(0, maxHealth);
-            MaxAmmo = Mathf.Max(0, maxAmmo);
+            MaxAmmo = Mathf.Clamp(maxAmmo, 0, 100);
             RespawnAmmo = Mathf.Clamp(respawnAmmo, 0, MaxAmmo);
 
             CurrentHealth = Mathf.Clamp(CurrentHealth, 0, MaxHealth);
