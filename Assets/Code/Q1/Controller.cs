@@ -17,13 +17,17 @@ namespace finalProject
 
         public GameObject projectilePrefab;
         public Transform ShootPoint;
-        public float projectileSpeed = 10f;
+        public float projectileSpeed = 13f;
         [SerializeField] Ammo ammoSystem;
                                               
         private Vector3 _spawnPos;
         private int _actualGroundLayer;
         private bool facingRight = true;
         private bool isJumping = false;
+        float maxSpeed = 10f;
+        [SerializeField] float shootCooldown = 0.2f; 
+        float lastShootTime = -Mathf.Infinity;
+
 
         void Start()
         {
@@ -50,7 +54,9 @@ namespace finalProject
             // Move Left
             if (Input.GetKey(KeyCode.LeftArrow))
             {
-                _rb.AddForce(Vector2.left * speed * Time.deltaTime);
+                if (_rb.velocity.x > -maxSpeed){
+                    _rb.AddForce(Vector2.left * speed * Time.deltaTime);
+                }
                 isMoving = true;
                 
                 if(facingRight){
@@ -61,7 +67,9 @@ namespace finalProject
             // Move Right
             if (Input.GetKey(KeyCode.RightArrow))
             {
-                _rb.AddForce(Vector2.right * speed * Time.deltaTime);
+                if (_rb.velocity.x < maxSpeed){
+                    _rb.AddForce(Vector2.right * speed * Time.deltaTime);
+                }               
                 isMoving = true;
 
                 if(!facingRight){
@@ -77,18 +85,21 @@ namespace finalProject
                 _rb.AddForce(Vector2.up * jumpForce);
                 isJumping = true; //set true on jump
                 _animator.SetBool("isJumping", true);
+                _animator.SetTrigger("JumpTrigger");
             }
 
              if (isJumping && IsGrounded())
             {
                 isJumping = false; // reset when landed
                 _animator.SetBool("isJumping", false);
+
             }
 
             float input = Input.GetAxisRaw("Horizontal");
 
-            if (Input.GetKeyDown(KeyCode.Z)){
+            if (Input.GetKeyDown(KeyCode.Z) & !(Time.time < lastShootTime + shootCooldown)){
                 Shoot();
+                _animator.SetTrigger("ShootTrigger");
             }
         }
         bool IsGrounded()
@@ -109,15 +120,22 @@ namespace finalProject
 
         void Shoot()
         {
+            if (Time.time < lastShootTime + shootCooldown){
+                return; //Cooldown
+            }
+
             if (ammoSystem != null && !ammoSystem.TrySpendAmmo(1))
             {
-                return; // Prevent firing when out of ammo.
+                return;
             }
 
             if (projectilePrefab == null || ShootPoint == null)
             {
                 return;
             }
+
+            lastShootTime = Time.time;
+            Debug.Log("Ammo before shooting: " + ammoSystem.CurrentAmmo);
 
             GameObject projectile = Instantiate(projectilePrefab, ShootPoint.position, Quaternion.identity);
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();

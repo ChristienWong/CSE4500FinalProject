@@ -7,8 +7,8 @@ namespace finalProject
     public class Ammo : MonoBehaviour
     {
         [Header("Ammo Settings")]
-        [SerializeField] int maxAmmo = 100;
-        [SerializeField] int currentAmmo = 100;
+        [SerializeField] int maxAmmo = 50;
+        [SerializeField] int currentAmmo = 50;
 
         [Header("UI References")]
         [SerializeField] bool rotateDial = false;
@@ -113,6 +113,8 @@ namespace finalProject
                 float t = maxAmmo <= 0 ? 0f : (float)currentAmmo / maxAmmo;
                 fillImage.fillAmount = t;
             }
+            Debug.Log("UI updated to: " + currentAmmo);
+
         }
 
 #if UNITY_EDITOR
