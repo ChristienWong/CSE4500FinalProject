@@ -75,6 +75,7 @@ namespace finalProject
         {
             Hide();
 
+            PlayerStats.ResetAll();
             SceneManager.LoadScene(_fallbackSceneName);
         }
     }

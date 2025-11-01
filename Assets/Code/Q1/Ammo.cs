@@ -8,7 +8,7 @@ namespace finalProject
     {
         [Header("Ammo Settings")]
         [SerializeField] int maxAmmo = 50;
-        [SerializeField] int currentAmmo = 50;
+        [SerializeField] int currentAmmo = 0;
 
         [Header("UI References")]
         [SerializeField] bool rotateDial = false;
