@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 1037557583211068676}
   - component: {fileID: 1089666286641723524}
   - component: {fileID: 6705357479056918369}
+  - component: {fileID: 4374130137635922633}
   m_Layer: 12
   m_Name: Enemy
   m_TagString: Enemy
@@ -129,6 +130,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animator: {fileID: 0}
   maxHealth: 3
+  contactDamage: 1
+  damageCooldown: 0.75
+  damageFlash: {fileID: 0}
 --- !u!60 &1089666286641723524
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -180,10 +184,11 @@ PolygonCollider2D:
       - {x: 0.105, y: 0.32999998}
       - {x: -0.074999996, y: 0.32999998}
       - {x: -0.105, y: 0.31}
-      - {x: -0.175, y: 0.21}
-      - {x: -0.235, y: 0.099999994}
-      - {x: -0.235, y: 0.01}
-      - {x: -0.114999995, y: -0.13}
+      - {x: -0.25764638, y: 0.31533355}
+      - {x: -0.31440532, y: 0.13241032}
+      - {x: -0.3192668, y: -0.0013436787}
+      - {x: -0.32766038, y: -0.20897032}
+      - {x: -0.33052868, y: -0.32608244}
       - {x: -0.155, y: -0.32999998}
       - {x: 0.21499999, y: -0.32999998}
       - {x: 0.225, y: -0.31}
@@ -210,3 +215,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4374130137635922633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4674684833876384770}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b038f025d640485b8043a5c5d778f829, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetRenderers: []
+  flashColor: {r: 1, g: 0.2, b: 0.2, a: 1}
+  flashDuration: 0.1

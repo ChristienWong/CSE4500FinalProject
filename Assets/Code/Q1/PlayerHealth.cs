@@ -18,6 +18,9 @@ namespace finalProject
         Ammo ammoSystem;
 
         [SerializeField]
+        DamageFlash damageFlash;
+
+        [SerializeField]
         int respawnAmmo = 50;
 
         [SerializeField]
@@ -40,6 +43,11 @@ namespace finalProject
                 ammoSystem = FindObjectOfType<Ammo>();
             }
 
+            if (damageFlash == null)
+            {
+                damageFlash = GetComponent<DamageFlash>();
+            }
+
             InitializeStats();
             ApplyStatsToWorld();
         }
@@ -48,6 +56,7 @@ namespace finalProject
         {
             currentHealth = Mathf.Max(0, currentHealth - amount);
             Debug.Log("Player damaged. Current health: " + currentHealth);
+            TriggerDamageFeedback();
 
             PlayerStats.UpdateHealth(currentHealth);
             SyncHeartUI();
@@ -118,6 +127,14 @@ namespace finalProject
             if (ammoSystem != null && PlayerStats.Initialized)
             {
                 ammoSystem.ApplyStoredAmmo(PlayerStats.CurrentAmmo);
+            }
+        }
+
+        void TriggerDamageFeedback()
+        {
+            if (damageFlash != null)
+            {
+                damageFlash.TriggerFlash();
             }
         }
 
