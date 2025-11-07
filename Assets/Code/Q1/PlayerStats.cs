@@ -48,5 +48,15 @@ namespace finalProject
             CurrentHealth = MaxHealth;
             CurrentAmmo = RespawnAmmo;
         }
+
+        public static void ResetAll()
+        {
+            Initialized = false;
+            MaxHealth = 0;
+            CurrentHealth = 0;
+            MaxAmmo = 0;
+            CurrentAmmo = 0;
+            RespawnAmmo = 0;
+        }
     }
 }

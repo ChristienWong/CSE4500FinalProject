@@ -8,31 +8,53 @@ namespace finalProject
     {
         public Animator _animator;
         public int maxHealth = 3;
-        private int currentHealth;
-        private Animator anim;
+        [SerializeField] int contactDamage = 1;
+        [SerializeField] float damageCooldown = 0.75f;
+
+        int currentHealth;
+        float lastDamageTime = -Mathf.Infinity;
+        Animator anim;
+        [SerializeField] DamageFlash damageFlash;
 
         void Start()
         {
             currentHealth = maxHealth;
             anim = GetComponent<Animator>();
+            if (damageFlash == null)
+            {
+                damageFlash = GetComponent<DamageFlash>();
+            }
         }
 
-        void OnCollisionEnter2D(Collision2D collision)
+        void OnCollisionEnter2D(Collision2D collision) => TryDamagePlayer(collision);
+
+        void OnCollisionStay2D(Collision2D collision) => TryDamagePlayer(collision);
+
+        void TryDamagePlayer(Collision2D collision)
         {
-            if (collision.gameObject.CompareTag("Player"))
+            if (!collision.gameObject.CompareTag("Player"))
             {
-                PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
-                if (player != null)
-                {
-                    player.TakeDamage(1); // or whatever amount you want
-                }
+                return;
             }
+
+            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+            if (player == null || Time.time < lastDamageTime + damageCooldown)
+            {
+                return;
+            }
+
+            player.TakeDamage(Mathf.Max(1, contactDamage));
+            lastDamageTime = Time.time;
         }
 
         public void TakeDamage(int amount)
         {
             currentHealth -= amount;
             Debug.Log("Current health: " + currentHealth);
+            if (damageFlash != null)
+            {
+                damageFlash.TriggerFlash();
+            }
 
             if (currentHealth <= 0)
             {

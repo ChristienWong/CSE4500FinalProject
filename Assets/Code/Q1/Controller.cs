@@ -25,15 +25,18 @@ namespace finalProject
         private bool facingRight = true;
         private bool isJumping = false;
         float maxSpeed = 10f;
-        [SerializeField] float shootCooldown = 0.2f; 
+        [SerializeField] float shootCooldown = 0.25f; 
         float lastShootTime = -Mathf.Infinity;
-
-
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip shootClip;
         void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<Collider2D>();
             _spawnPos = transform.position; 
+            if (audioSource == null){
+                audioSource = GetComponent<AudioSource>();
+            }
 
             if (ammoSystem == null)
             {
@@ -140,6 +143,7 @@ namespace finalProject
             GameObject projectile = Instantiate(projectilePrefab, ShootPoint.position, Quaternion.identity);
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
             rb.velocity = new Vector2(facingRight ? projectileSpeed : -projectileSpeed, 0);
+            audioSource.PlayOneShot(shootClip);
         }
         
     }
