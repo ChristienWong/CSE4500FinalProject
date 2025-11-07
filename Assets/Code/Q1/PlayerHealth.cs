@@ -137,6 +137,14 @@ namespace finalProject
                 damageFlash.TriggerFlash();
             }
         }
+       public void Heal(int amount)
+{
+    currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+    Debug.Log("Player healed. Current health: " + currentHealth);
+
+    PlayerStats.UpdateHealth(currentHealth);
+    SyncHeartUI();
+}
 
     }
 }

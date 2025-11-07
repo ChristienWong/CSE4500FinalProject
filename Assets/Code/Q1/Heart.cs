@@ -19,19 +19,24 @@ public class Heart : MonoBehaviour
             health = numOfHearts;
         }
 
-        if (health < 0){
+        if (health < 0)
+        {
             health = 0;
         }
 
-        for (int i = 0; i < hearts.Length; i++){
-            if (hearts[i] == null){
+        for (int i = 0; i < hearts.Length; i++)
+        {
+            if (hearts[i] == null)
+            {
                 continue;
             }
 
-            if (i < health){
+            if (i < health)
+            {
                 hearts[i].sprite = fullHeart;
             }
-            else{
+            else
+            {
                 hearts[i].sprite = emptyHeart;
             }
 
