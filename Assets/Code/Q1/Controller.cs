@@ -33,8 +33,10 @@ namespace finalProject
         {
             _rb = GetComponent<Rigidbody2D>();
             _col = GetComponent<Collider2D>();
-            _spawnPos = transform.position; 
-            if (audioSource == null){
+            _animator = GetComponent<Animator>();
+            _spawnPos = transform.position;
+            if (audioSource == null)
+            {
                 audioSource = GetComponent<AudioSource>();
             }
 
@@ -46,6 +48,19 @@ namespace finalProject
                 {
                     ammoSystem = FindObjectOfType<Ammo>();
                 }
+            }
+        }
+        
+        void FixedUpdate()
+        {
+            _animator.SetFloat("Speed", _rb.velocity.magnitude);
+            if (_rb.velocity.magnitude > 0)
+            {
+                _animator.speed = _rb.velocity.magnitude / 3f;
+            }
+            else
+            {
+                _animator.speed = 1f;
             }
         }
 
