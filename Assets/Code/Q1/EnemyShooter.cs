@@ -57,9 +57,10 @@ namespace finalProject
             float sqrRange = detectionRange * detectionRange;
             float sqrDistance = (targetPlayer.transform.position - transform.position).sqrMagnitude;
 
-            if (sqrDistance <= sqrRange)
+            if (sqrDistance <= sqrRange && TryGetAimDirection(out Vector2 direction))
             {
-                TryShoot();
+                AimAtTarget(direction);
+                TryShoot(direction);
             }
         }
 
@@ -72,7 +73,37 @@ namespace finalProject
             }
         }
 
-        void TryShoot()
+        bool TryGetAimDirection(out Vector2 direction)
+        {
+            direction = Vector2.zero;
+
+            if (targetPlayer == null || firePoint == null)
+            {
+                return false;
+            }
+
+            Vector2 delta = targetPlayer.transform.position - firePoint.position;
+            if (delta.sqrMagnitude <= 0.0001f)
+            {
+                return false;
+            }
+
+            direction = delta.normalized;
+            return true;
+        }
+
+        void AimAtTarget(Vector2 direction)
+        {
+            if (firePoint == null)
+            {
+                return;
+            }
+
+            Quaternion rotation = CalculateAimRotation(direction);
+            firePoint.rotation = rotation;
+        }
+
+        void TryShoot(Vector2 direction)
         {
             if (projectilePrefab == null)
             {
@@ -86,8 +117,8 @@ namespace finalProject
 
             lastShotTime = Time.time;
 
-            Vector2 direction = (targetPlayer.transform.position - firePoint.position).normalized;
-            GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+            Quaternion projectileRotation = CalculateAimRotation(direction);
+            GameObject projectile = Instantiate(projectilePrefab, firePoint.position, projectileRotation);
 
             if (projectile.TryGetComponent<Rigidbody2D>(out var rb))
             {
@@ -103,6 +134,12 @@ namespace finalProject
             {
                 animator.SetTrigger("Shoot");
             }
+        }
+
+        Quaternion CalculateAimRotation(Vector2 direction)
+        {
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            return Quaternion.AngleAxis(angle, Vector3.forward);
         }
 
         void OnCollisionEnter2D(Collision2D collision) => TryDamagePlayer(collision);
