@@ -23,11 +23,26 @@ namespace finalProject
             Debug.Log("Hit object: " + other.name + " | Tag: " + other.tag);
             if (other.CompareTag("Enemy"))
             {
-                Debug.Log("Hit enemy: ");
+                bool dealtDamage = false;
+
                 Enemy enemy = other.GetComponent<Enemy>();
                 if (enemy != null)
                 {
-                    enemy.TakeDamage(1); 
+                    enemy.TakeDamage(1);
+                    dealtDamage = true;
+                }
+
+                EnemyShooter shooter = other.GetComponent<EnemyShooter>();
+                if (shooter != null)
+                {
+                    shooter.TakeDamage(1);
+                    dealtDamage = true;
+                }
+
+                if (dealtDamage)
+                {
+                    Destroy(gameObject);
+                    return;
                 }
             }
 

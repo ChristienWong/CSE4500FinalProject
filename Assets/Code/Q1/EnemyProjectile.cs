@@ -29,14 +29,15 @@ namespace finalProject
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
             }
 
-            if (other.CompareTag("Player"))
+            PlayerHealth player = other.GetComponent<PlayerHealth>();
+            if (player == null)
             {
-                PlayerHealth player = other.GetComponent<PlayerHealth>();
-                if (player != null)
-                {
-                    player.TakeDamage(damage);
-                }
+                player = other.GetComponentInParent<PlayerHealth>();
+            }
 
+            if (player != null)
+            {
+                player.TakeDamage(damage);
                 Destroy(gameObject);
                 return;
             }

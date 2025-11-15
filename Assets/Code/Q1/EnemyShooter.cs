@@ -18,17 +18,27 @@ namespace finalProject
         [SerializeField] float projectileSpeed = 6f;
         [SerializeField] float fireInterval = 1.5f;
         [SerializeField] float detectionRange = 10f;
+        [SerializeField] string shootTriggerName = "Shoot";
+        [SerializeField] string shootAnimationStateName = "EnemyShoot";
 
         Animator animator;
         PlayerHealth targetPlayer;
         int currentHealth;
         float lastDamageTime = -Mathf.Infinity;
         float lastShotTime = -Mathf.Infinity;
+        Vector3 initialScale;
+        Collider2D[] ownColliders;
+        int shootStateHash;
 
         void Awake()
         {
             animator = GetComponent<Animator>();
             currentHealth = Mathf.Max(1, maxHealth);
+            initialScale = transform.localScale;
+            ownColliders = GetComponentsInChildren<Collider2D>();
+            shootStateHash = !string.IsNullOrEmpty(shootAnimationStateName)
+                ? Animator.StringToHash(shootAnimationStateName)
+                : 0;
 
             if (damageFlash == null)
             {
@@ -59,6 +69,7 @@ namespace finalProject
 
             if (sqrDistance <= sqrRange && TryGetAimDirection(out Vector2 direction))
             {
+                UpdateFacing(direction);
                 AimAtTarget(direction);
                 TryShoot(direction);
             }
@@ -90,6 +101,19 @@ namespace finalProject
 
             direction = delta.normalized;
             return true;
+        }
+
+        void UpdateFacing(Vector2 direction)
+        {
+            if (Mathf.Abs(direction.x) <= 0.01f)
+            {
+                return;
+            }
+
+            float desiredSign = direction.x >= 0f ? 1f : -1f;
+            Vector3 newScale = transform.localScale;
+            newScale.x = Mathf.Abs(initialScale.x) * desiredSign;
+            transform.localScale = newScale;
         }
 
         void AimAtTarget(Vector2 direction)
@@ -125,21 +149,76 @@ namespace finalProject
                 rb.velocity = direction * projectileSpeed;
             }
 
+            IgnoreSelfCollision(projectile);
+
             if (projectile.TryGetComponent<EnemyProjectile>(out var enemyProjectile))
             {
                 enemyProjectile.Initialize(Mathf.Max(1, contactDamage));
             }
 
-            if (animator != null)
-            {
-                animator.SetTrigger("Shoot");
-            }
+            PlayShootAnimation();
         }
 
         Quaternion CalculateAimRotation(Vector2 direction)
         {
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             return Quaternion.AngleAxis(angle, Vector3.forward);
+        }
+
+        void PlayShootAnimation()
+        {
+            if (animator == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(shootTriggerName) && HasAnimatorTrigger(shootTriggerName))
+            {
+                animator.SetTrigger(shootTriggerName);
+                return;
+            }
+
+            if (shootStateHash != 0 && animator.HasState(0, shootStateHash))
+            {
+                animator.Play(shootStateHash, 0, 0f);
+            }
+        }
+
+        bool HasAnimatorTrigger(string triggerToFind)
+        {
+            foreach (AnimatorControllerParameter parameter in animator.parameters)
+            {
+                if (parameter.type == AnimatorControllerParameterType.Trigger &&
+                    parameter.name == triggerToFind)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        void IgnoreSelfCollision(GameObject projectile)
+        {
+            if (ownColliders == null || ownColliders.Length == 0)
+            {
+                return;
+            }
+
+            if (!projectile.TryGetComponent<Collider2D>(out var projectileCollider))
+            {
+                return;
+            }
+
+            foreach (Collider2D col in ownColliders)
+            {
+                if (col == null)
+                {
+                    continue;
+                }
+
+                Physics2D.IgnoreCollision(projectileCollider, col);
+            }
         }
 
         void OnCollisionEnter2D(Collision2D collision) => TryDamagePlayer(collision);
