@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 namespace finalProject
 {
@@ -11,6 +12,8 @@ namespace finalProject
         [SerializeField] int contactDamage = 1;
         [SerializeField] float damageCooldown = 0.75f;
         [SerializeField] string idleStateName = "EnemyIdle";
+
+        [SerializeField] CinemachineImpulseSource impulseSource;
 
         int currentHealth;
         float lastDamageTime = -Mathf.Infinity;

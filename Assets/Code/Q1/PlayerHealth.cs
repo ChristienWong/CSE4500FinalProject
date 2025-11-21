@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cinemachine; 
 
 namespace finalProject
 {
@@ -26,6 +27,9 @@ namespace finalProject
         [SerializeField]
         string restartSceneName = "Q1";
 
+        [SerializeField]
+        CinemachineImpulseSource impulseSource;
+
         void Start()
         {
             ResolveHeartUIReference();
@@ -43,6 +47,10 @@ namespace finalProject
             if (damageFlash == null)
             {
                 damageFlash = GetComponent<DamageFlash>();
+            }
+            if (impulseSource == null)
+            {
+                impulseSource = FindObjectOfType<CinemachineImpulseSource>();
             }
 
             InitializeStats();
@@ -98,6 +106,10 @@ namespace finalProject
         {
             currentHealth = Mathf.Max(0, currentHealth - amount);
             Debug.Log("Player damaged. Current health: " + currentHealth);
+            if (impulseSource != null)
+            {
+                impulseSource.GenerateImpulse();
+            }
             TriggerDamageFeedback();
 
             PlayerStats.UpdateHealth(currentHealth);
