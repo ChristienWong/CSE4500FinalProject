@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using TMPro;
 using UnityEngine;
 
@@ -48,6 +49,25 @@ namespace finalProject
                 {
                     ammoSystem = FindObjectOfType<Ammo>();
                 }
+            }
+
+            var virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+            if (virtualCamera != null)
+            {
+                // Ensure the camera actually tracks this player instance.
+                if (virtualCamera.Follow != transform)
+                {
+                    virtualCamera.Follow = transform;
+                }
+
+                if (virtualCamera.LookAt == null)
+                {
+                    virtualCamera.LookAt = transform;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Controller: No CinemachineVirtualCamera found, camera follow disabled.");
             }
         }
         

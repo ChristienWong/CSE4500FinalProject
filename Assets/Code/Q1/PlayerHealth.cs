@@ -28,10 +28,7 @@ namespace finalProject
 
         void Start()
         {
-            if (heartUI == null)
-            {
-                heartUI = FindObjectOfType<Heart>();
-            }
+            ResolveHeartUIReference();
 
             if (_respawn == null)
             {
@@ -50,6 +47,51 @@ namespace finalProject
 
             InitializeStats();
             ApplyStatsToWorld();
+        }
+
+        void ResolveHeartUIReference()
+        {
+            if (heartUI != null && heartUI.HasConfiguredHearts)
+            {
+                return;
+            }
+
+            Heart[] candidates = Resources.FindObjectsOfTypeAll<Heart>();
+            Heart fallback = null;
+
+            foreach (Heart candidate in candidates)
+            {
+                if (candidate == null)
+                {
+                    continue;
+                }
+
+                if (!candidate.gameObject.scene.IsValid())
+                {
+                    continue;
+                }
+
+                if (fallback == null)
+                {
+                    fallback = candidate;
+                }
+
+                if (candidate.HasConfiguredHearts)
+                {
+                    heartUI = candidate;
+                    break;
+                }
+            }
+
+            if (heartUI == null)
+            {
+                heartUI = fallback;
+            }
+
+            if (heartUI == null)
+            {
+                Debug.LogWarning("PlayerHealth: Unable to locate a Heart UI in the active scene.");
+            }
         }
 
         public void TakeDamage(int amount)

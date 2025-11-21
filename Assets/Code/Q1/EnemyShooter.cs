@@ -67,9 +67,16 @@ namespace finalProject
             float sqrRange = detectionRange * detectionRange;
             float sqrDistance = (targetPlayer.transform.position - transform.position).sqrMagnitude;
 
-            if (sqrDistance <= sqrRange && TryGetAimDirection(out Vector2 direction))
+            if (!TryGetAimDirection(out Vector2 direction))
             {
-                UpdateFacing(direction);
+                return;
+            }
+
+            // Always keep the sprite facing the player even if out of range.
+            UpdateFacing(direction);
+
+            if (sqrDistance <= sqrRange)
+            {
                 AimAtTarget(direction);
                 TryShoot(direction);
             }
@@ -111,8 +118,9 @@ namespace finalProject
             }
 
             float desiredSign = direction.x >= 0f ? 1f : -1f;
+            float initialSign = Mathf.Approximately(initialScale.x, 0f) ? 1f : Mathf.Sign(initialScale.x);
             Vector3 newScale = transform.localScale;
-            newScale.x = Mathf.Abs(initialScale.x) * desiredSign;
+            newScale.x = Mathf.Abs(initialScale.x) * desiredSign * initialSign;
             transform.localScale = newScale;
         }
 
