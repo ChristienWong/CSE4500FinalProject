@@ -112,7 +112,7 @@ namespace finalProject
 
         void UpdateFacing(Vector2 direction)
         {
-            if (Mathf.Abs(direction.x) <= 0.01f)
+            if (Mathf.Abs(direction.x) <= 0.9f)
             {
                 return;
             }
@@ -161,6 +161,7 @@ namespace finalProject
 
             if (projectile.TryGetComponent<EnemyProjectile>(out var enemyProjectile))
             {
+                
                 enemyProjectile.Initialize(Mathf.Max(1, contactDamage));
             }
 

@@ -14,6 +14,7 @@ namespace finalProject
             if (lifetimeSeconds > 0f)
             {
                 Destroy(gameObject, lifetimeSeconds);
+                Debug.Log("Player should take damage.");
             }
         }
 
@@ -24,6 +25,7 @@ namespace finalProject
 
         void OnTriggerEnter2D(Collider2D other)
         {
+            Debug.Log("Player should take damage.");
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);

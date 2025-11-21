@@ -81,14 +81,14 @@ namespace finalProject
 
         void OnCollisionStay2D(Collision2D collision) => TryDamagePlayer(collision);
 
-        void TryDamagePlayer(Collision2D collision)
+        public void TryDamagePlayer(Collision2D collision)
         {
             if (!collision.gameObject.CompareTag("Player"))
             {
                 return;
             }
 
-            PlayerHealth player = collision.gameObject.GetComponent<PlayerHealth>();
+            PlayerHealth player = FindObjectOfType<PlayerHealth>();
             if (player == null || Time.time < lastDamageTime + damageCooldown)
             {
                 return;

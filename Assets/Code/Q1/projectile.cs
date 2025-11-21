@@ -11,11 +11,13 @@ namespace finalProject
 
         void Start()
         {
+            
             Destroy(gameObject, lifetime);
         }
 
         void OnTriggerEnter2D(Collider2D other)
         {
+            PlayerHealth player = FindObjectOfType<PlayerHealth>();
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
@@ -44,6 +46,14 @@ namespace finalProject
                     Destroy(gameObject);
                     return;
                 }
+            }
+
+
+            //get damaged if hurt by enemy projectile
+            if (other.CompareTag("Player")){
+                Debug.Log("Player should take damage.");
+                PlayerHealth playerH = FindObjectOfType<PlayerHealth>();
+                playerH.TakeDamage(1);
             }
 
             Destroy(gameObject);
