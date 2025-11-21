@@ -17,7 +17,21 @@ namespace finalProject
 
         void OnTriggerEnter2D(Collider2D other)
         {
+            // --------- PLAY SOUNDS ---------
+            // Hit an enemy or player  → "hit" sound
+            if (other.CompareTag("Enemy") || other.CompareTag("Player"))
+            {
+                SoundManager.instance.PlaySoundHit();
+            }
+            // Hit the ground (or whatever layer you use for it) → "miss" sound
+            else if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            {
+                SoundManager.instance.PlaySoundMiss();
+            }
+            // --------------------------------
+            
             PlayerHealth player = FindObjectOfType<PlayerHealth>();
+
             if (impactEffect != null)
             {
                 Instantiate(impactEffect, transform.position, Quaternion.identity);
