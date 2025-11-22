@@ -18,15 +18,23 @@ namespace finalProject
         void OnTriggerEnter2D(Collider2D other)
         {
             // --------- PLAY SOUNDS ---------
-            // Hit an enemy or player  → "hit" sound
-            if (other.CompareTag("Enemy") || other.CompareTag("Player"))
+            // Hit an enemy or player  -> "hit" sound
+            SoundManager soundManager = SoundManager.instance;
+            if (soundManager != null)
             {
-                SoundManager.instance.PlaySoundHit();
+                if (other.CompareTag("Enemy") || other.CompareTag("Player"))
+                {
+                    soundManager.PlaySoundHit();
+                }
+                // Hit the ground (or whatever layer you use for it) -> "miss" sound
+                else if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+                {
+                    soundManager.PlaySoundMiss();
+                }
             }
-            // Hit the ground (or whatever layer you use for it) → "miss" sound
-            else if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
+            else
             {
-                SoundManager.instance.PlaySoundMiss();
+                Debug.LogWarning("Projectile: No SoundManager instance in scene; skipping audio cues.");
             }
             // --------------------------------
             
@@ -74,4 +82,5 @@ namespace finalProject
         }
     }
 }
+
 

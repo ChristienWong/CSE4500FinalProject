@@ -161,7 +161,7 @@ namespace finalProject
         void InitializeStats()
         {
             int ammoMax = ammoSystem != null ? ammoSystem.MaxAmmo : respawnAmmo;
-            int ammoCurrent = ammoSystem != null ? ammoSystem.CurrentAmmo : respawnAmmo;
+            int ammoCurrent = 0;
 
             if (!PlayerStats.Initialized)
             {

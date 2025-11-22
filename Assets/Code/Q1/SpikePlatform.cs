@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace finalProject
@@ -9,13 +10,13 @@ namespace finalProject
         [Tooltip("Damage dealt to the player on contact")]
         public int damage = 1;
 
-        [Tooltip("Seconds before spikes can hurt the player again")]
-        public float damageCooldown = 1f;
+        [Tooltip("Seconds before spikes deal damage again while the player stands on them")]
+        public float damageCooldown = 2f;
 
         [Tooltip("Restart the scene when the player dies (uses PlayerHealth)")]
         public bool restartSceneOnDeath = true;
 
-        private float lastDamageTime;
+        private readonly Dictionary<Collider2D, float> nextDamageTimes = new Dictionary<Collider2D, float>();
 
         void Reset()
         {
@@ -30,14 +31,39 @@ namespace finalProject
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            // Only hurt the player
             if (!other.CompareTag("Player")) return;
 
-            if (Time.time < lastDamageTime + damageCooldown) return;
-            lastDamageTime = Time.time;
+            DealDamage(other);
+            nextDamageTimes[other] = Time.time + damageCooldown;
+        }
 
-            // Call PlayerHealth so UI updates
-            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+        private void OnTriggerStay2D(Collider2D other)
+        {
+            if (!other.CompareTag("Player")) return;
+
+            if (!nextDamageTimes.TryGetValue(other, out float nextDamageTime))
+            {
+                DealDamage(other);
+                nextDamageTimes[other] = Time.time + damageCooldown;
+                return;
+            }
+
+            if (Time.time < nextDamageTime) return;
+
+            DealDamage(other);
+            nextDamageTimes[other] = Time.time + damageCooldown;
+        }
+
+        private void OnTriggerExit2D(Collider2D other)
+        {
+            if (!other.CompareTag("Player")) return;
+
+            nextDamageTimes.Remove(other);
+        }
+
+        private void DealDamage(Collider2D playerCollider)
+        {
+            PlayerHealth playerHealth = playerCollider.GetComponent<PlayerHealth>();
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damage);
