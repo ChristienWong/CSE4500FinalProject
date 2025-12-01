@@ -176,6 +176,13 @@ namespace finalProject
             Debug.Log("Ammo before shooting: " + ammoSystem.CurrentAmmo);
 
             GameObject projectile = Instantiate(projectilePrefab, ShootPoint.position, Quaternion.identity);
+            if (!facingRight)
+            {
+                Vector3 scale = projectile.transform.localScale;
+                scale.x *= -1;
+                projectile.transform.localScale = scale;
+            }
+
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
             rb.velocity = new Vector2(facingRight ? projectileSpeed : -projectileSpeed, 0);
             audioSource.PlayOneShot(shootClip);
