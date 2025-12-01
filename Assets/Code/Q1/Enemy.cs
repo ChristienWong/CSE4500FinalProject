@@ -91,7 +91,7 @@ namespace finalProject
                 return;
             }
 
-            PlayerHealth player = FindObjectOfType<PlayerHealth>();
+            PlayerHealth player = collision.collider.GetComponentInParent<PlayerHealth>();
             if (player == null || Time.time < lastDamageTime + damageCooldown)
             {
                 return;
